@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/probe" privileged="true" crossContext="true">
+    <!--  
+    <ResourceLink  name="jdbc/postgresGlobalDBCP2"
+            global="jdbc/postgresGlobalDBCP"
+            type="javax.sql.DataSource"/>
+      
+    <ResourceLink  name="jdbc/postgresGlobalTomcatJDBC2"
+            global="jdbc/postgresGlobalTomcatJDBC"
+            type="javax.sql.DataSource"/>
+    -->  
+    <!--  
+    <Resource name="jdbc/postgresDbcp3" 
+              auth="Container"
+              type="javax.sql.DataSource" 
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+              driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://127.0.0.1:5432/teste"
+              username="postgres" 
+              password="postgres" 
+              maxActive="20" 
+              maxIdle="10" 
+              maxWait="-1"
+    />
+      
+    <Resource name="jdbc/postgresTomcatJdbc3" 
+              auth="Container"
+              type="javax.sql.DataSource" 
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+              driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://127.0.0.1:5432/teste"
+              username="postgres" 
+              password="postgres" 
+              maxActive="19" 
+              maxIdle="10" 
+              maxWait="-1"
+    />-->
+      
+</Context>
