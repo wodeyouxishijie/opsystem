@@ -32,7 +32,7 @@
 		<div>
 			<ul class="options">
 				<li id="pools">
-					<a href="<c:url value='/threadpools.htm'/>">
+					<a href="<c:url value='/threadpools.htm?serverId=${serverId}'/>">
 						<spring:message code="probe.jsp.threads.menu.threadpools"/>
 					</a>
 				</li>

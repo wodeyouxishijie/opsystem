@@ -20,7 +20,9 @@ import java.io.Serializable;
  * @author Mark Lewis
  */
 public class Application implements Serializable {
-    private String name;
+	private static final long serialVersionUID = 8545182223250339470L;
+	
+	private String name;
     private String displayName;
     private String docBase;
     private boolean available;
@@ -41,8 +43,18 @@ public class Application implements Serializable {
     private long minTime;
     private long maxTime;
     private long avgTime;
+    private long httpCostTime;
+    
 
-    public String getName() {
+    public long getHttpCostTime() {
+		return httpCostTime;
+	}
+
+	public void setHttpCostTime(long httpCostTime) {
+		this.httpCostTime = httpCostTime;
+	}
+
+	public String getName() {
         return name;
     }
 

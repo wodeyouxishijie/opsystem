@@ -10,19 +10,26 @@
  */
 package com.googlecode.psiprobe.controllers.threads;
 
-import com.googlecode.psiprobe.model.SunThread;
-import com.googlecode.psiprobe.model.ThreadStackElement;
-import com.googlecode.psiprobe.tools.JmxTools;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.modeler.Registry;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.ParameterizableViewController;
+
+import com.googlecode.psiprobe.model.SunThread;
+import com.googlecode.psiprobe.model.ThreadStackElement;
+import com.googlecode.psiprobe.model.jmx.JmxServerInfoPuller;
+import com.googlecode.psiprobe.tools.JmxTools;
+import com.googlecode.psiprobe.tools.jmxserver.RemoteServerInfo;
+import com.googlecode.psiprobe.tools.jmxserver.RemoteServerUtil;
 
 /**
  * 
@@ -30,53 +37,64 @@ import org.springframework.web.servlet.mvc.ParameterizableViewController;
  */
 public class ListSunThreadsController extends ParameterizableViewController {
 
+	private JmxServerInfoPuller puller = new JmxServerInfoPuller();
+	
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-        List threads = null;
-        int executionStackDepth = 1;
-
-        MBeanServer mBeanServer = new Registry().getMBeanServer();
-        ObjectName threadingOName = new ObjectName("java.lang:type=Threading");
-
-        long[] deadlockedIds = (long[]) mBeanServer.invoke(threadingOName, "findMonitorDeadlockedThreads", null, null);
-        long[] allIds = (long[]) mBeanServer.getAttribute(threadingOName, "AllThreadIds");
-
-        if (allIds != null) {
-            threads = new ArrayList(allIds.length);
-
-            for (int i = 0; i < allIds.length; i++) {
-                CompositeData cd = (CompositeData) mBeanServer.invoke(threadingOName, "getThreadInfo",
-                        new Object[]{new Long(allIds[i]), new Integer(executionStackDepth)}, new String[]{"long", "int"});
-
-                if (cd != null) {
-                    SunThread st = new SunThread();
-                    st.setId(JmxTools.getLongAttr(cd, "threadId"));
-                    st.setName(JmxTools.getStringAttr(cd, "threadName"));
-                    st.setState(JmxTools.getStringAttr(cd, "threadState"));
-                    st.setSuspended(JmxTools.getBooleanAttr(cd, "suspended"));
-                    st.setInNative(JmxTools.getBooleanAttr(cd, "inNative"));
-                    st.setLockName(JmxTools.getStringAttr(cd, "lockName"));
-                    st.setLockOwnerName(JmxTools.getStringAttr(cd, "lockOwnerName"));
-                    st.setWaitedCount(JmxTools.getLongAttr(cd, "waitedCount"));
-                    st.setBlockedCount(JmxTools.getLongAttr(cd, "blockedCount"));
-                    st.setDeadlocked(contains(deadlockedIds, st.getId()));
-
-                    CompositeData[] stack = (CompositeData[]) cd.get("stackTrace");
-                    if (stack.length > 0) {
-                        CompositeData cd2 = stack[0];
-                        ThreadStackElement tse = new ThreadStackElement();
-                        tse.setClassName(JmxTools.getStringAttr(cd2, "className"));
-                        tse.setFileName(JmxTools.getStringAttr(cd2, "fileName"));
-                        tse.setMethodName(JmxTools.getStringAttr(cd2, "methodName"));
-                        tse.setLineNumber(JmxTools.getIntAttr(cd2, "lineNumber", -1));
-                        tse.setNativeMethod(JmxTools.getBooleanAttr(cd2, "nativeMethod"));
-                        st.setExecutionPoint(tse);
-                    }
-
-                    threads.add(st);
-                }
-            }
-        }
+    	
+    	int serverId = ServletRequestUtils.getIntParameter(request, "serverId", 0);
+    	RemoteServerInfo remoteServerInfo = RemoteServerUtil.getRemoteServerInfoById(serverId);
+    	List threads = null;
+    	
+    	if(null == remoteServerInfo) {
+	    	
+	        int executionStackDepth = 1;
+	        
+	        MBeanServer mBeanServer = new Registry().getMBeanServer();
+	        ObjectName threadingOName = new ObjectName("java.lang:type=Threading");
+	
+	        long[] deadlockedIds = (long[]) mBeanServer.invoke(threadingOName, "findMonitorDeadlockedThreads", null, null);
+	        long[] allIds = (long[]) mBeanServer.getAttribute(threadingOName, "AllThreadIds");
+	
+	        if (allIds != null) {
+	            threads = new ArrayList(allIds.length);
+	
+	            for (int i = 0; i < allIds.length; i++) {
+	                CompositeData cd = (CompositeData) mBeanServer.invoke(threadingOName, "getThreadInfo",
+	                        new Object[]{new Long(allIds[i]), new Integer(executionStackDepth)}, new String[]{"long", "int"});
+	
+	                if (cd != null) {
+	                    SunThread st = new SunThread();
+	                    st.setId(JmxTools.getLongAttr(cd, "threadId"));
+	                    st.setName(JmxTools.getStringAttr(cd, "threadName"));
+	                    st.setState(JmxTools.getStringAttr(cd, "threadState"));
+	                    st.setSuspended(JmxTools.getBooleanAttr(cd, "suspended"));
+	                    st.setInNative(JmxTools.getBooleanAttr(cd, "inNative"));
+	                    st.setLockName(JmxTools.getStringAttr(cd, "lockName"));
+	                    st.setLockOwnerName(JmxTools.getStringAttr(cd, "lockOwnerName"));
+	                    st.setWaitedCount(JmxTools.getLongAttr(cd, "waitedCount"));
+	                    st.setBlockedCount(JmxTools.getLongAttr(cd, "blockedCount"));
+	                    st.setDeadlocked(contains(deadlockedIds, st.getId()));
+	
+	                    CompositeData[] stack = (CompositeData[]) cd.get("stackTrace");
+	                    if (stack.length > 0) {
+	                        CompositeData cd2 = stack[0];
+	                        ThreadStackElement tse = new ThreadStackElement();
+	                        tse.setClassName(JmxTools.getStringAttr(cd2, "className"));
+	                        tse.setFileName(JmxTools.getStringAttr(cd2, "fileName"));
+	                        tse.setMethodName(JmxTools.getStringAttr(cd2, "methodName"));
+	                        tse.setLineNumber(JmxTools.getIntAttr(cd2, "lineNumber", -1));
+	                        tse.setNativeMethod(JmxTools.getBooleanAttr(cd2, "nativeMethod"));
+	                        st.setExecutionPoint(tse);
+	                    }
+	
+	                    threads.add(st);
+	                }
+	            }
+	        }
+    	} else {
+    		threads = puller.pullThreadListInfo(remoteServerInfo);
+    		
+    	}
         return new ModelAndView(getViewName(), "threads", threads);
     }
 

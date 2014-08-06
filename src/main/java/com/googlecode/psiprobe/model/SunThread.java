@@ -114,4 +114,15 @@ public class SunThread {
     public void setExecutionPoint(ThreadStackElement executionPoint) {
         this.executionPoint = executionPoint;
     }
+
+	@Override
+	public String toString() {
+		return "SunThread [id=" + id + ", name=" + name + ", state=" + state
+				+ ", deadlocked=" + deadlocked + ", suspended=" + suspended
+				+ ", inNative=" + inNative + ", lockName=" + lockName
+				+ ", lockOwnerName=" + lockOwnerName + ", waitedCount="
+				+ waitedCount + ", blockedCount=" + blockedCount
+				+ ", executionPoint=" + executionPoint + "]";
+	}
+    
 }

@@ -10,11 +10,18 @@
  */
 package com.googlecode.psiprobe.controllers.apps;
 
-import com.googlecode.psiprobe.controllers.ContextHandlerController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.catalina.Context;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.googlecode.psiprobe.controllers.ContextHandlerController;
+import com.googlecode.psiprobe.model.Application;
+import com.googlecode.psiprobe.model.jmx.JmxServerInfoPuller;
+import com.googlecode.psiprobe.tools.jmxserver.RemoteServerInfo;
+import com.googlecode.psiprobe.tools.jmxserver.RemoteServerUtil;
 
 /**
  * Reloads application context.
@@ -44,4 +51,19 @@ public class AjaxReloadContextController extends ContextHandlerController {
                 Boolean.valueOf(context != null && context.getConfigured()));
     }
 
+	@Override
+	protected ModelAndView reloadStatus(HttpServletRequest request,String contextName,int serverId) throws Exception {
+		logger.info(request.getRemoteAddr() + " requested RELOAD of "+contextName);
+		RemoteServerInfo remoteServerInfo = RemoteServerUtil.getRemoteServerInfoById(serverId);
+		ModelMap modelMap = new ModelMap();
+		if(null != remoteServerInfo) {
+			JmxServerInfoPuller puller = new JmxServerInfoPuller();
+			Application app = new Application();
+			puller.isServerAlive(app, remoteServerInfo);
+			modelMap.put("available", app.isAvailable());
+			modelMap.put("costTime", app.getHttpCostTime());
+		}
+        return new ModelAndView(getViewName(), "statusModel",modelMap);
+	}
+    
 }

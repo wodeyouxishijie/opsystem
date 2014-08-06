@@ -32,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.googlecode.psiprobe.controllers.TomcatContainerController;
 import com.googlecode.psiprobe.model.Application;
+import com.googlecode.psiprobe.model.jmx.JmxServerInfoPuller;
 import com.googlecode.psiprobe.tools.ApplicationUtils;
 import com.googlecode.psiprobe.tools.SecurityUtils;
 import com.googlecode.psiprobe.tools.jmxserver.RemoteServerInfo;
@@ -46,6 +47,8 @@ import com.googlecode.psiprobe.tools.jmxserver.RemoteServerUtil;
  * @author Mark Lewis
  */
 public class ListWebappsController extends TomcatContainerController {
+	
+	private JmxServerInfoPuller puller = new JmxServerInfoPuller();
 	
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -75,11 +78,9 @@ public class ListWebappsController extends TomcatContainerController {
 	        }
 	        return new ModelAndView(getViewName(), "apps", applications);
         } else {
-        	JMXServiceURL serviceURL = new JMXServiceURL(remoteServerInfo.getJmxUrl()); 
-        	JMXConnector connector = JMXConnectorFactory.connect(serviceURL);
-        	MBeanServerConnection connection = connector.getMBeanServerConnection();  
-        	
-        	return new ModelAndView(getViewName(), "apps", null);
+        	request.setAttribute("ordinary_server", Boolean.TRUE);
+        	request.setAttribute("serverId", serverId);
+        	return new ModelAndView(getViewName(), "apps", puller.pullApplicationInfo(remoteServerInfo));
         }
     }
     
@@ -90,16 +91,18 @@ public class ListWebappsController extends TomcatContainerController {
     	JMXConnector connector = JMXConnectorFactory.connect(serviceURL);
     	MBeanServerConnection connection = connector.getMBeanServerConnection();  
     	ObjectName threadObjName = new ObjectName("Catalina:type=Host,host=localhost");  
-    	Object obj = connection.getAttribute(threadObjName, "children");
+    	ObjectName[] obj = (ObjectName[])connection.getAttribute(threadObjName, "children");
     	System.out.println(obj);
-    	ObjectName children = new ObjectName("Catalina:j2eeType=WebModule,name=//localhost/probe,J2EEApplication=none,J2EEServer=none");
-    	AttributeList attriList = connection.getAttributes(children, new String[]{"displayName","crossContext"});
+    	ObjectName children = new ObjectName(obj[0].toString());
+    	AttributeList attriList = connection.getAttributes(children, new String[]{"displayName","crossContext",
+    			"name","requestCount","sessionCount","sessionTimeout","distributable"});
     	Iterator iter = attriList.iterator();
     	Map<String,Object> attMap = new HashMap<String,Object>();
     	while(iter.hasNext()) {
     		Attribute objs = (Attribute)iter.next();
     		attMap.put(objs.getName(), objs.getValue());
     	}
+    	System.out.println(attMap);
         //MBeanInfo mbInfo = connection.getMBeanInfo(threadObjName);  
 	}
 }

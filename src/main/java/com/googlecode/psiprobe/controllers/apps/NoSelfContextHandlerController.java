@@ -52,6 +52,5 @@ public abstract class NoSelfContextHandlerController extends ContextHandlerContr
         return new ModelAndView(new RedirectView(request.getContextPath() + getViewName() + (isPassQueryString() ? "?" + request.getQueryString() : "")));
     }
 
-
-    protected abstract void executeAction(String contextName) throws Exception;
+	protected abstract void executeAction(String contextName) throws Exception;
 }

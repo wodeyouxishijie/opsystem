@@ -93,47 +93,47 @@
 			<div id="navcontainer" >
 				<ul id="tabnav">
 					<li>
-						<a class="${navTabApps}" href="<c:url value='/index.htm?size=${param.size}'/>">
+						<a class="${navTabApps}" href="<c:url value='/index.htm?size=${param.size}&serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.applications"/>
 						</a>
 					</li>
 					<li>
-						<a class="${navTabDatasources}" href="<c:url value='/datasources.htm'/>">
+						<a class="${navTabDatasources}" href="<c:url value='/datasources.htm?serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.datasources"/>
 						</a>
 					</li>
 					<li>
-						<a class="${navTabDeploy}" href="<c:url value='/adm/deploy.htm'/>">
+						<a class="${navTabDeploy}" href="<c:url value='/adm/deploy.htm?serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.deployment"/>
 						</a>
 					</li>
 					<li>
-						<a class="${navTabLogs}" href="<c:url value='/logs/index.htm'/>">
+						<a class="${navTabLogs}" href="<c:url value='/logs/index.htm?serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.logs"/>
 						</a>
 					</li>
 					<li>
-						<a class="${navTabThreads}" href="<c:url value='/threads.htm'/>">
+						<a class="${navTabThreads}" href="<c:url value='/threads.htm?serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.threads"/>
 						</a>
 					</li>
 					<li>
-						<a class="${navTabCluster}" href="<c:url value='/cluster.htm'/>">
+						<a class="${navTabCluster}" href="<c:url value='/cluster.htm?serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.cluster"/>
 						</a>
 					</li>
 					<li>
-						<a class="${navTabSystem}" href="<c:url value='/sysinfo.htm'/>">
+						<a class="${navTabSystem}" href="<c:url value='/sysinfo.htm?serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.sysinfo"/>
 						</a>
 					</li>
 					<li>
-						<a class="${navTabConnectors}" href="<c:url value='/connectors.htm'/>">
+						<a class="${navTabConnectors}" href="<c:url value='/connectors.htm?serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.connectors"/>
 						</a>
 					</li>
 					<li>
-						<a class="${navTabQuickCheck}" href="<c:url value='/adm/quickcheck.htm'/>">
+						<a class="${navTabQuickCheck}" href="<c:url value='/adm/quickcheck.htm?serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.quickcheck"/>
 						</a>
 					</li>
@@ -156,47 +156,47 @@
 			<div id="footer">
 				<ul>
 					<li>
-						<a href="<c:url value='/index.htm'/>">
+						<a href="<c:url value='/index.htm&serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.applications"/>
 						</a>
 					</li>
 					<li>
-						<a href="<c:url value='/datasources.htm'/>">
+						<a href="<c:url value='/datasources.htm&serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.datasources"/>
 						</a>
 					</li>
 					<li>
-						<a href="<c:url value='/adm/deploy.htm'/>">
+						<a href="<c:url value='/adm/deploy.htm&serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.deployment"/>
 						</a>
 					</li>
 					<li>
-						<a href="<c:url value='/logs/index.htm'/>">
+						<a href="<c:url value='/logs/index.htm&serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.logs"/>
 						</a>
 					</li>
 					<li>
-						<a href="<c:url value='/threads.htm'/>">
+						<a href="<c:url value='/threads.htm&serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.threads"/>
 						</a>
 					</li>
 					<li>
-						<a href="<c:url value='/cluster.htm'/>">
+						<a href="<c:url value='/cluster.htm&serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.cluster"/>
 						</a>
 					</li>
 					<li>
-						<a href="<c:url value='/sysinfo.htm'/>">
+						<a href="<c:url value='/sysinfo.htm&serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.sysinfo"/>
 						</a>
 					</li>
 					<li>
-						<a href="<c:url value='/connectors.htm'/>">
+						<a href="<c:url value='/connectors.htm&serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.connectors"/>
 						</a>
 					</li>
 					<li class="last">
-						<a href="<c:url value='/adm/quickcheck.htm'/>">
+						<a href="<c:url value='/adm/quickcheck.htm&serverId=${serverId}'/>">
 							<spring:message code="probe.jsp.menu.quickcheck"/>
 						</a>
 					</li>

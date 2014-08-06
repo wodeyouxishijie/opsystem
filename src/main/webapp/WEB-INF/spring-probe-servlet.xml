@@ -42,6 +42,7 @@
 		<property name="interceptors">
 			<list>
 				<ref bean="localeChangeInterceptor"/>
+				<ref bean="serverIdInterceptor"/>
 			</list>
 		</property>
 	</bean>
@@ -49,5 +50,8 @@
 	<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
 		<property name="paramName" value="lang"/>
 	</bean>
-
+	
+	<bean id="serverIdInterceptor" class="com.googlecode.psiprobe.beans.stats.interceptors.ServerIdInterceptor">
+	</bean>
+	
 </beans>

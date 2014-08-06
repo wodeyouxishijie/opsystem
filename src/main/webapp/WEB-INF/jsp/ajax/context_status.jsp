@@ -14,8 +14,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 
 <c:choose>
-	<c:when test="${available}">
-		<spring:message code="probe.jsp.applications.status.up"/>
+	<c:when test="${statusModel.available}">
+		<spring:message code="probe.jsp.applications.status.up" arguments='${statusModel.costTime}'/>
 	</c:when>
 	<c:otherwise>
 		<spring:message code="probe.jsp.applications.status.down"/>

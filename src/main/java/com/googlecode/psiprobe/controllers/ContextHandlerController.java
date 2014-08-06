@@ -26,21 +26,27 @@ public abstract class ContextHandlerController extends TomcatContainerController
 
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String contextName = ServletRequestUtils.getStringParameter(request, "webapp", null);
-        Context context = null;
-        if (contextName != null) {
-            contextName = getContainerWrapper().getTomcatContainer().formatContextName(contextName);
-            context = getContainerWrapper().getTomcatContainer().findContext(contextName);
-        }
-
-        if (context != null || isContextOptional()) {
-            return handleContext(contextName, context, request, response);
+        int serverId = ServletRequestUtils.getIntParameter(request, "serverId", 0);
+        
+        if(serverId < 1) {
+	        Context context = null;
+	        if (contextName != null) {
+	            contextName = getContainerWrapper().getTomcatContainer().formatContextName(contextName);
+	            context = getContainerWrapper().getTomcatContainer().findContext(contextName);
+	        }
+	
+	        if (context != null || isContextOptional()) {
+	            return handleContext(contextName, context, request, response);
+	        } else {
+	            if (contextName != null) {
+	                request.setAttribute("errorMessage",
+	                        getMessageSourceAccessor().getMessage("probe.src.contextDoesntExist", new Object[] {contextName}));
+	            }
+	
+	            return new ModelAndView("errors/paramerror");
+	        }
         } else {
-            if (contextName != null) {
-                request.setAttribute("errorMessage",
-                        getMessageSourceAccessor().getMessage("probe.src.contextDoesntExist", new Object[] {contextName}));
-            }
-
-            return new ModelAndView("errors/paramerror");
+        	return reloadStatus(request,contextName,serverId);
         }
     }
 
@@ -50,4 +56,9 @@ public abstract class ContextHandlerController extends TomcatContainerController
 
     protected abstract ModelAndView handleContext(String contextName, Context context,
                                                   HttpServletRequest request, HttpServletResponse response) throws Exception;
+    
+    protected ModelAndView reloadStatus(HttpServletRequest request,String contextName,int serverId) throws Exception {
+    	return null;
+    }
+    
 }

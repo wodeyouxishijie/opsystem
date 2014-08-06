@@ -134,12 +134,14 @@
 				<c:set var="confirmMessage">
 					<spring:message code="probe.jsp.applications.undeploy.confirm" arguments="${app.name}"/>
 				</c:set>
-				<a class="imglink" href="<c:url value='/adm/undeploy.htm'><c:param name='webapp' value='${app.name}'/></c:url>"
-						onclick="return confirm('${confirmMessage}')">
-					<img class="lnk" src="${pageContext.request.contextPath}<spring:theme code='remove.img'/>"
-							alt="<spring:message code='probe.jsp.applications.alt.undeploy'/>"
-							title="<spring:message code='probe.jsp.applications.title.undeploy' arguments='${app.name}'/>"/>
-				</a>
+				<c:if test="${!ordinary_server}">
+					<a class="imglink" href="<c:url value='/adm/undeploy.htm'><c:param name='webapp' value='${app.name}'/></c:url>"
+							onclick="return confirm('${confirmMessage}')">
+						<img class="lnk" src="${pageContext.request.contextPath}<spring:theme code='remove.img'/>"
+								alt="<spring:message code='probe.jsp.applications.alt.undeploy'/>"
+								title="<spring:message code='probe.jsp.applications.title.undeploy' arguments='${app.name}'/>"/>
+					</a>
+				</c:if>
 			</display:column>
 
 			<display:column sortable="true" sortProperty="name" titleKey="probe.jsp.applications.col.name">
@@ -156,7 +158,7 @@
 								href="<c:url value='/app/stop.htm'/>?webapp=${app.name}"
 								title="<spring:message code='probe.jsp.applications.title.status.up' arguments='${app.name}'/>">
 							<div class="okValue" id="rs_${app_rowNum}">
-								<spring:message code="probe.jsp.applications.status.up"/>
+								<spring:message code="probe.jsp.applications.status.up" arguments='${app.httpCostTime}ms'/>
 							</div>
 						</a>
 					</c:when>
@@ -173,9 +175,9 @@
 			</display:column>
 
 			<display:column title="&nbsp;">
-				<a onclick="return handleContextReload('${app_rowNum}', '${app.name}');"
+				<a onclick="return handleContextReload('${app_rowNum}', '${app.name}&serverId=${serverId}');"
 						class="imglink"
-						href="<c:url value='/app/reload.htm'/>?webapp=${app.name}">
+						href="<c:url value='/app/reload.htm'/>?webapp=${app.name}&serverId=${serverId}">
 					<img id='ri_${app_rowNum}'
 							border="0" src="${pageContext.request.contextPath}<spring:theme code='reset.gif'/>"
 							alt="<spring:message code='probe.jsp.applications.alt.reload'/>"
@@ -192,51 +194,44 @@
 					${app.requestCount}
 				</a>
 			</display:column>
-
+			
 			<display:column sortable="true" sortProperty="sessionCount"
 					titleKey="probe.jsp.applications.col.sessionCount">
 				<a href="<c:url value='/sessions.htm'><c:param name='webapp' value='${app.name}'/><c:param name='size' value='${param.size}'/></c:url>">
 					${app.sessionCount}
 				</a>
 			</display:column>
-
-			<display:column property="sessionAttributeCount" sortable="true"
-					titleKey="probe.jsp.applications.col.sessionAttributeCount"/>
-
+			
+			<c:if test="${!ordinary_server}">
+				<display:column property="sessionAttributeCount" sortable="true"
+						titleKey="probe.jsp.applications.col.sessionAttributeCount"/>
+			</c:if>
+			
 			<c:if test="${param.size}">
 				<display:column sortProperty="size" sortable="true"
 								titleKey="probe.jsp.applications.col.size" class="highlighted">
 					<probe:volume value="${app.size}"/>
 				</display:column>
 			</c:if>
-
-			<display:column sortable="true" sortProperty="contextAttributeCount"
-					titleKey="probe.jsp.applications.col.contextAttributeCount">
-				<a href="<c:url value='/appattributes.htm'><c:param name='webapp' value='${app.name}'/></c:url>">
-					${app.contextAttributeCount}
-				</a>
-			</display:column>
-
-			<display:column property="sessionTimeout" sortable="true" titleKey="probe.jsp.applications.col.sessionTimeout"/>
-
-			<display:column titleKey="probe.jsp.applications.col.jsp">
-				<a class="imglink" href="<c:url value='/app/jsp.htm'><c:param name='webapp' value='${app.name}'/></c:url>">
-					<img border="0" src="${pageContext.request.contextPath}<spring:theme code='magnifier.png'/>" alt="<spring:message code='probe.jsp.applications.jsp.view'/>">
-				</a>
-			</display:column>
-
-			<c:if test="${!no_resources}">
-				<display:column sortable="true" sortProperty="dataSourceBusyScore"
-						titleKey="probe.jsp.applications.col.jdbcUsage" class="score_wrapper">
-					<div class="score_wrapper">
-						<probe:score value="${app.dataSourceBusyScore}" value2="${app.dataSourceEstablishedScore - app.dataSourceBusyScore}" fullBlocks="10" partialBlocks="5" showEmptyBlocks="true" showA="true" showB="true">
-							<a class="imglink" href="<c:url value='/resources.htm?webapp=${app.name}'/>"><img border="0"
-																											src="<c:url value='/css/classic/gifs/rb_{0}.gif'/>" alt="+"
-																											title="<spring:message code='probe.jsp.applications.jdbcUsage.title' arguments='${app.dataSourceBusyScore},${app.dataSourceEstablishedScore}'/>"/></a>
-						</probe:score>
-					</div>
+			
+			<c:if test="${!ordinary_server}">
+				<display:column sortable="true" sortProperty="contextAttributeCount"
+						titleKey="probe.jsp.applications.col.contextAttributeCount">
+					<a href="<c:url value='/appattributes.htm'><c:param name='webapp' value='${app.name}'/></c:url>">
+						${app.contextAttributeCount}
+					</a>
 				</display:column>
 			</c:if>
+			
+			<display:column property="sessionTimeout" sortable="true" titleKey="probe.jsp.applications.col.sessionTimeout"/>
+			
+			<c:if test="${!ordinary_server}">
+				<display:column titleKey="probe.jsp.applications.col.jsp">
+					<a class="imglink" href="<c:url value='/app/jsp.htm'><c:param name='webapp' value='${app.name}'/></c:url>">
+						<img border="0" src="${pageContext.request.contextPath}<spring:theme code='magnifier.png'/>" alt="<spring:message code='probe.jsp.applications.jsp.view'/>">
+					</a>
+				</display:column>
+			</c:if>	
 
 			<display:column titleKey="probe.jsp.applications.col.distributable" sortable="true"
 					sortProperty="distributable">
@@ -249,18 +244,20 @@
 					</c:otherwise>
 				</c:choose>
 			</display:column>
-
-			<display:column titleKey="probe.jsp.applications.col.serializable" sortable="true" sortProperty="serializable">
-				<c:choose>
-					<c:when test="${app.serializable}">
-						<span class="okValue"><spring:message code="probe.jsp.applications.serializable.yes"/></span>
-					</c:when>
-					<c:otherwise>
-						<span class="errorValue"><spring:message code="probe.jsp.applications.serializable.no"/></span>
-					</c:otherwise>
-				</c:choose>
-			</display:column>
-
+			
+			<c:if test="${!ordinary_server}">
+				<display:column titleKey="probe.jsp.applications.col.serializable" sortable="true" sortProperty="serializable">
+					<c:choose>
+						<c:when test="${app.serializable}">
+							<span class="okValue"><spring:message code="probe.jsp.applications.serializable.yes"/></span>
+						</c:when>
+						<c:otherwise>
+							<span class="errorValue"><spring:message code="probe.jsp.applications.serializable.no"/></span>
+						</c:otherwise>
+					</c:choose>
+				</display:column>
+			</c:if>
+			
 		</display:table>
 
 		<script type="text/javascript">

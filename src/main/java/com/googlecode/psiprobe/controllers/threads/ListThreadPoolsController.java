@@ -10,12 +10,19 @@
  */
 package com.googlecode.psiprobe.controllers.threads;
 
-import com.googlecode.psiprobe.beans.ContainerListenerBean;
-import com.googlecode.psiprobe.controllers.TomcatContainerController;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.googlecode.psiprobe.beans.ContainerListenerBean;
+import com.googlecode.psiprobe.controllers.TomcatContainerController;
+import com.googlecode.psiprobe.model.jmx.JmxServerInfoPuller;
+import com.googlecode.psiprobe.tools.jmxserver.RemoteServerInfo;
+import com.googlecode.psiprobe.tools.jmxserver.RemoteServerUtil;
 
 /**
  * Creates the list of http connection thread pools.
@@ -26,6 +33,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class ListThreadPoolsController extends TomcatContainerController {
 
     private ContainerListenerBean containerListenerBean;
+    
+    private JmxServerInfoPuller puller = new JmxServerInfoPuller();
 
     public ContainerListenerBean getContainerListenerBean() {
         return containerListenerBean;
@@ -36,8 +45,16 @@ public class ListThreadPoolsController extends TomcatContainerController {
     }
 
     public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        List pools = containerListenerBean.getThreadPools();
-        return new ModelAndView(getViewName())
-                .addObject("pools", pools);
+    	int serverId = ServletRequestUtils.getIntParameter(request, "serverId", 0);
+    	RemoteServerInfo remoteServerInfo = RemoteServerUtil.getRemoteServerInfoById(serverId);
+    	List pools = null;
+    	if(null == remoteServerInfo) {
+	        pools = containerListenerBean.getThreadPools();
+    	} else {
+    		pools = puller.pullThreadInfo(remoteServerInfo);
+    	}
+    	
+    	return new ModelAndView(getViewName())
+        	.addObject("pools", pools);
     }
 }

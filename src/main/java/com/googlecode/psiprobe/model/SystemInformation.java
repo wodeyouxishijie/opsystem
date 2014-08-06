@@ -10,12 +10,11 @@
  */
 package com.googlecode.psiprobe.model;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.apache.catalina.util.ServerInfo;
 
 /**
  * POJO representing system information for "system infromation" tab.
@@ -26,34 +25,64 @@ public class SystemInformation implements Serializable {
 
     private String appBase;
     private String configBase;
-    private Map systemProperties;
+    private long maxMemory;
+    private long freeMemory;
+    private long totalMemory;
+    private int cpuCount;
+    private String serverInfo;
+    private Map systemProperties = new HashMap();
+    private String workingDir;
 
     public long getMaxMemory() {
-        return Runtime.getRuntime().maxMemory();
+        return maxMemory;
     }
 
     public long getFreeMemory() {
-        return Runtime.getRuntime().freeMemory();
+        return freeMemory;
     }
 
     public long getTotalMemory() {
-        return Runtime.getRuntime().totalMemory();
+        return totalMemory;
     }
 
     public int getCpuCount() {
-        return Runtime.getRuntime().availableProcessors();
+        return cpuCount;
     }
 
-    public Date getDate() {
+    public void setMaxMemory(long maxMemory) {
+		this.maxMemory = maxMemory;
+	}
+
+	public void setFreeMemory(long freeMemory) {
+		this.freeMemory = freeMemory;
+	}
+
+	public void setTotalMemory(long totalMemory) {
+		this.totalMemory = totalMemory;
+	}
+
+	public void setCpuCount(int cpuCount) {
+		this.cpuCount = cpuCount;
+	}
+
+	public void setServerInfo(String serverInfo) {
+		this.serverInfo = serverInfo;
+	}
+
+	public void setWorkingDir(String workingDir) {
+		this.workingDir = workingDir;
+	}
+
+	public Date getDate() {
         return new Date();
     }
 
     public String getServerInfo() {
-        return ServerInfo.getServerInfo();
+        return serverInfo;
     }
 
     public String getWorkingDir() {
-        return new File("").getAbsolutePath();
+        return workingDir;
     }
 
     public String getAppBase() {

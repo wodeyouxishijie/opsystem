@@ -28,15 +28,14 @@
 	<body>
 
 		<c:set var="navTabThreads" value="active" scope="request"/>
-
 		<ul class="options">
 			<li id="threads">
-				<a href="<c:url value='/threads.htm'/>">
+				<a href="<c:url value='/threads.htm?serverId=${serverId}'/>">
 					<spring:message code="probe.jsp.threadpools.menu.threads"/>
 				</a>
 			</li>
 		</ul>
-
+		
 		<display:table name="pools" uid="pool" class="genericTbl" cellspacing="0" requestURI="" defaultsort="1" defaultorder="ascending">
 			<display:column property="name"               sortable="true" titleKey="probe.jsp.threadpools.name"               style="white-space:nowrap;" class="leftmost"/>
 			<display:column property="currentThreadCount" sortable="true" titleKey="probe.jsp.threadpools.currentThreadCount" style="white-space:nowrap;"/>
